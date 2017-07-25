@@ -4,8 +4,8 @@ class Library(object):
         self.name = name
         self.books = set([])
 
-    def add_book(self, book):
-        self.books.add(book)
+    def add_book(self, author, title, length):
+        self.books.add(Book(author, title, length))
 
     def get_books(self):
         return self.books
@@ -85,10 +85,8 @@ class Reading(object):
 
 if __name__ == "__main__":
     library = Library("online reader")
-    hp = Book("JK", "HP", 123)
-    hb = Book("JR", "Hobbit", 789)
-    library.add_book(hp)
-    library.add_book(hb)
+    library.add_book("JK", "HP", 123)
+    library.add_book("JR", "Hobbit", 789)
 
     sally = User("sally", "things", library)
     bob = User("bob", "things", library)
