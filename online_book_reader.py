@@ -14,7 +14,6 @@ class Library(object):
         for book in self.books:
             if book.title == title:
                 return book
-        return
 
 
 class Book(object):
@@ -95,7 +94,6 @@ if __name__ == "__main__":
     hp = sally.add_book("HP")
     sally.show_books()
     hobbit.turn_page()
+
     sally.update_book("Hobbit", "finished")
     sally.show_books()
-
-
