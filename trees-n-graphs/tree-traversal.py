@@ -1,9 +1,3 @@
-
-# coding: utf-8
-
-# In[101]:
-
-
 class Node(object):
     
     def __init__(self, data, left, right):
@@ -11,13 +5,6 @@ class Node(object):
         self.child_left = left
         self.child_right = right
         
-def in_order_traversal(node):
-    if node:
-        in_order_traversal(node.child_left)
-        print node.data
-        in_order_traversal(node.child_right)
-    
-
 def pre_order_traversal(node):
     if node:
         print node.data
@@ -30,8 +17,11 @@ def post_order_traversal(node):
         post_order_traversal(node.child_right)
         print node.data
 
-
-# In[40]:
+def in_order_traversal(node):
+    if node:
+        in_order_traversal(node.child_left)
+        print node.data
+        in_order_traversal(node.child_right)
 
 
 class Tree(object):
@@ -65,25 +55,19 @@ t = Tree(n10)
 t.root
 
 
-# In[93]:
-
-
-in_order_traversal(t.root)
-
-
-# In[94]:
-
-
+print "pre order"
 pre_order_traversal(t.root)
 
 
 # In[104]:
 
-
+print "post order"
 post_order_traversal(t.root)
 
 
-# In[ ]:
+
+print "in order"
+in_order_traversal(t.root)
 
 
 
