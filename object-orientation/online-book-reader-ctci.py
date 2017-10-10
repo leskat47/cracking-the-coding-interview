@@ -6,6 +6,8 @@ class OnlineLibrary(object):
         self.display = Display(self)
 
     def set_active_book(self, book):
+        """Set current book being read and display"""
+
         self.active_book = book
         self.display.set_display_book(book)
 
