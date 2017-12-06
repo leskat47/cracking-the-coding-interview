@@ -67,17 +67,28 @@ def k_to_last(a, k):
             current = current.next
         return current
 
+
+def k_from_end_recursive(current, k):
+    """Find node n from the end"""
+
+    if not current:
+        return 0
+
+    r = count_to_end(current.next, k)
+    if isinstance(r, int):
+        n = r + 1
+        if n == k:
+            return current
+        else:
+            return n
+    else:
+        return r
+
+
+
 f = Node("fresa")
 e = Node("elderberry", f)
 d = Node("durian", e)
 c = Node("cherry", d)
 b = Node("berry", c)
 a = Node("apple", b)
-print binary_k_to_last(a, 3)
-
-
-# def count_to_end(current, n):
-#     """Are we n nodes from the end"""
-#
-#     if n == 0 and not current:
-#         return True
