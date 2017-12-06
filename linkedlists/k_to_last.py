@@ -7,7 +7,7 @@ class Node(object):
     def __repr__(self):
         return "<Node {}>".format(self.data)
 
-
+# ///////////////////////////////////////////////////////
 def find_length(a):
 
     count = 1
@@ -37,16 +37,47 @@ def get_k_to_last(a, k):
 
     return current
 
-d = Node("durian")
+# ///////////////////////////////////////////////////////
+
+def k_to_last(a, k):
+    """ Slightly optimized return k from the end of linked list"""
+
+    half = a
+    full = a
+
+    length = 1
+
+    while full.next and full.next.next:
+        half = half.next
+        full = full.next.next
+        length += 2
+
+    if full.next:
+        length += 1
+
+    if k <= length / 2:
+        count = length / 2 - k
+        for i in range(count + 1):
+            half = half.next
+        return half
+    else:
+        count = length - k
+        current = a
+        for i in range(count):
+            current = current.next
+        return current
+
+f = Node("fresa")
+e = Node("elderberry", f)
+d = Node("durian", e)
 c = Node("cherry", d)
 b = Node("berry", c)
 a = Node("apple", b)
-print get_k_to_last(a, 2)
+print binary_k_to_last(a, 3)
+
 
 # def count_to_end(current, n):
 #     """Are we n nodes from the end"""
 #
 #     if n == 0 and not current:
 #         return True
-
-# binary searsh - use 2 runners to determine lengthe and midpoint
