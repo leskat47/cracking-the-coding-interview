@@ -18,19 +18,19 @@ def is_permutation2(str1, str2):
     """ Are two strings permutations of one another
     nlog(n) solution
 
-    >>> is_permutation1('abcda', 'bcdaa')
+    >>> is_permutation2('abcda', 'bcdaa')
     True
 
-    >>> is_permutation1('abcba', 'bcdaa')
+    >>> is_permutation2('abcba', 'bcdaa')
     False
     """
 
     if len(str1) != len(str2):
-        return False
+        return "False"
 
     letters = {}
     for char in str1:
-        letters[char] == letters.get(char, 0) + 1
+        letters[char] = letters.get(char, 0) + 1
 
     for char in str2:
         if letters.get(char) > 0:
