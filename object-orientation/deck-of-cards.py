@@ -1,35 +1,22 @@
-# Class Deck: singleton
-    # in-deck set class attr
-    # played class attr
-    # method: play card
-    # method: reset deck
-# class suit: enum in Py3
-# class value: enum in Py3
-# class card: suit, value
-# class game
+import random
 
-from random import choice
-
-SUITS = {"diamonds", "hearts", "clubs", "spades"}
-VALUES = {"A": 11, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, "Jack": 10, "Queen": 10, "King": 10}
+SUITS = {"Diamonds", "Hearts", "Clubs", "Spades"}
+VALUES = {"Ace": 11, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, "Jack": 10, "Queen": 10, "King": 10}
 
 class Deck(object):
 
     def __init__(self):
-        self.cards = set()
+        self.cards = []
         self.set_deck()
 
     def set_deck(self):
-        self.cards = set()
+        self.cards = []
         for s in SUITS:
             for v in VALUES:
-                self.cards.add(Card(s, v))
+                self.cards.append(Card(s, v))
 
     def get_card(self):
-        # return self.cards.pop()
-        import random
-        cards = random.choice([Card("d", "A"), Card("d", 9), Card('s', 3)])
-        return cards
+        return self.cards.pop()
 
 
 class Card(object):
@@ -39,7 +26,11 @@ class Card(object):
         self.value = value
 
     def __repr__(self):
-        return str(self.value)
+        return "{} of {}".format(self.value, self.suit)
+
+    def get_pts(self):
+        return VALUES[self.value]
+
 
 class Hand(object):
 
@@ -53,14 +44,13 @@ class Hand(object):
             self.pts = map(lambda pts: pts + 1, self.pts) + \
                        filter(lambda pts: pts < 22, map(lambda pts: pts + 11, self.pts))
         else:
-            self.pts = map(lambda pts: pts + VALUES[card.value], self.pts)
+            self.pts = map(lambda pts: pts + card.get_pts(), self.pts)
 
         if not self.pts:
             if card.value == "A":
                 self.pts.append(1)
-            self.pts.append(VALUES[card.value])
+            self.pts.append(card.get_pts())
 
-        print self.pts
 
     def get_best_total(self):
         while self.pts and self.pts[-1] > 21:
@@ -76,7 +66,7 @@ class Game(object):
 
         self._setup()
 
-        while self.dealer_hand.pts[0] < 21 and self.player_hand.pts[0] < 21:
+        while self.player_hand.pts[0] < 21:
 
             print "Your cards are ", self.player_hand.cards
             print "Dealer is showing", self.dealer_hand.cards[1:]
@@ -87,33 +77,36 @@ class Game(object):
                 print "Card is {} of {}".format(card.value, card.suit)
                 self.player_hand.add_card(card)
 
-                if self.dealer_hand.pts[0] < 18:
-                    card = self.deck.get_card()
-                    print "Dealer gets {} of {}".format(card.value, card.suit)
-                    self.dealer_hand.add_card(card)
-
             elif next == "stand":
-                while self.dealer_hand.pts[0] < 18:
-                    card = self.deck.get_card()
-                    print "Dealer gets {} of {}".format(card.value, card.suit)
-                    self.dealer_hand.add_card(card)
                 break
             elif next == "quit":
                 return
 
+        if self.player_hand.get_best_total() == "BUST":
+            print "YOU BUST! Dealer wins."
+            return
+
+        # Dealer plays out
+        print "Dealer's hand is", self.dealer_hand.cards
+        if self.dealer_hand.pts[0] < 18:
+            card = self.deck.get_card()
+            print "Dealer gets {} of {}".format(card.value, card.suit)
+            self.dealer_hand.add_card(card)
+
         if self.dealer_hand.get_best_total() == "BUST":
             print "YOU WIN!"
-        elif self.player_hand.get_best_total() == "BUST":
-            print "YOU BUST! Dealer wins."
         else:
             if self.dealer_hand.get_best_total() > self.player_hand.get_best_total():
                 print "Dealer wins with ", self.dealer_hand.get_best_total()
-                return
-            print "You win with ", self.player_hand.get_best_total()
-            return
+            elif self.dealer_hand.get_best_total() < self.player_hand.get_best_total():
+                print "You win with ", self.player_hand.get_best_total()
+            else:
+                print "It's a push."
+
 
     def _setup(self):
         self.deck = Deck()
+        random.shuffle(self.deck.cards)
         self.dealer_hand = Hand()
         self.player_hand = Hand()
 
