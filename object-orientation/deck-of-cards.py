@@ -50,15 +50,16 @@ class Hand(object):
     def add_card(self, card):
         self.cards.append(card)
         if card.value == 'A':
-            if 'A' in [c.value for c in self.cards]:  # no need to add another 11 Ace value
-                self.pts = [pts + 1 for pts in self.pts]
-            else:
-                self.pts = [pts + 1 for pts in self.pts] + [pts + 11 for pts in self.pts if pts + VALUES[card.value] < 21]
+            self.pts = map(lambda pts: pts + 1, self.pts) + \
+                       filter(lambda pts: pts < 22, map(lambda pts: pts + 11, self.pts))
         else:
-            self.pts = [pts + VALUES[card.value] for pts in self.pts]
+            self.pts = map(lambda pts: pts + VALUES[card.value], self.pts)
 
         if not self.pts:
-            self.pts = [VALUES[card.value]]
+            if card.value == "A":
+                self.pts.append(1)
+            self.pts.append(VALUES[card.value])
+
         print self.pts
 
     def get_best_total(self):
