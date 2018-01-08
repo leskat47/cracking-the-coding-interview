@@ -11,7 +11,7 @@
 from random import choice
 
 SUITS = {"diamonds", "hearts", "clubs", "spades"}
-VALUES = {"A": 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, "Jack": 10, "Queen": 10, "King": 10}
+VALUES = {"A": 11, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, "Jack": 10, "Queen": 10, "King": 10}
 
 class Deck(object):
 
@@ -26,7 +26,10 @@ class Deck(object):
                 self.cards.add(Card(s, v))
 
     def get_card(self):
-        return self.cards.pop()
+        # return self.cards.pop()
+        import random
+        cards = random.choice([Card("d", "A"), Card("d", 9), Card('s', 3)])
+        return cards
 
 
 class Card(object):
@@ -35,22 +38,36 @@ class Card(object):
         self.suit = suit
         self.value = value
 
+    def __repr__(self):
+        return str(self.value)
+
 class Hand(object):
 
     def __init__(self):
-        self.cards = set()
-        self.pts = 0
+        self.cards = []
+        self.pts = []
 
     def add_card(self, card):
-        self.cards.add(card)
-        self.pts += VALUES[card.value]
+        self.cards.append(card)
+        if card.value == 'A':
+            if 'A' in [c.value for c in self.cards]:  # no need to add another 11 Ace value
+                self.pts = [pts + 1 for pts in self.pts]
+            else:
+                self.pts = [pts + 1 for pts in self.pts] + [pts + 11 for pts in self.pts if pts + VALUES[card.value] < 21]
+        else:
+            self.pts = [pts + VALUES[card.value] for pts in self.pts]
 
-    def get_total(self, hand):
-        total = 0
-        vals = [VALUES[card.value] for card in self.cards]
-        for v in vals:
-            total += v
-        return total
+        if not self.pts:
+            self.pts = [VALUES[card.value]]
+        print self.pts
+
+    def get_best_total(self):
+        while self.pts and self.pts[-1] > 21:
+            self.pts.pop(-1)
+        if self.pts:
+            return self.pts[-1]
+        else:
+            return "BUST"
 
 class Game(object):
 
@@ -58,9 +75,10 @@ class Game(object):
 
         self._setup()
 
-        while self.dealer_hand.pts < 21 and self.player_hand.pts < 21:
-            print "Your total is ", self.player_hand.pts
-            print "Dealer total is ", self.dealer_hand.pts
+        while self.dealer_hand.pts[0] < 21 and self.player_hand.pts[0] < 21:
+
+            print "Your cards are ", self.player_hand.cards
+            print "Dealer is showing", self.dealer_hand.cards[1:]
             next = self.get_user_input()
 
             if next == "hit":
@@ -68,13 +86,13 @@ class Game(object):
                 print "Card is {} of {}".format(card.value, card.suit)
                 self.player_hand.add_card(card)
 
-                if self.dealer_hand.pts < 18:
+                if self.dealer_hand.pts[0] < 18:
                     card = self.deck.get_card()
                     print "Dealer gets {} of {}".format(card.value, card.suit)
                     self.dealer_hand.add_card(card)
 
             elif next == "stand":
-                while self.dealer_hand.pts < 18:
+                while self.dealer_hand.pts[0] < 18:
                     card = self.deck.get_card()
                     print "Dealer gets {} of {}".format(card.value, card.suit)
                     self.dealer_hand.add_card(card)
@@ -82,16 +100,15 @@ class Game(object):
             elif next == "quit":
                 return
 
-
-        if self.dealer_hand.pts > 21:
+        if self.dealer_hand.get_best_total() == "BUST":
             print "YOU WIN!"
-        elif self.player_hand.pts > 21:
+        elif self.player_hand.get_best_total() == "BUST":
             print "YOU BUST! Dealer wins."
         else:
-            if self.dealer_hand.pts > self.player_hand.pts:
-                print "Dealer wins with ", self.dealer_hand.pts
+            if self.dealer_hand.get_best_total() > self.player_hand.get_best_total():
+                print "Dealer wins with ", self.dealer_hand.get_best_total()
                 return
-            print "You win with ", self.player_hand.pts
+            print "You win with ", self.player_hand.get_best_total()
             return
 
     def _setup(self):
@@ -101,7 +118,7 @@ class Game(object):
 
         for deal in range(2):
             card = self.deck.get_card()
-            print "Dealer: {} of {}".format(card.value, card.suit)
+            # print "Dealer: {} of {}".format(card.value, card.suit)
             self.dealer_hand.add_card(card)
             card = self.deck.get_card()
             print "Player: {} of {}".format(card.value, card.suit)
