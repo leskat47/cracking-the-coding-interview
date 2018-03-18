@@ -16,7 +16,7 @@ def URLify(s_arr):
         if s_arr[end] == ' ':
             end += 1
             if end == stop:
-                s_arr[start:] = [1]
+                s_arr[start:] = []
         else:
             if start != end:
                 s_arr[start:end] = ['%20']
