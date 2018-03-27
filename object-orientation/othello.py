@@ -81,7 +81,7 @@ class Board(object):
         return True
 
     def _make_row_flips(self, curr_color, other_color, row, col):
-        """ Find changable pieces and return whether any changes were made"""
+        """ Find changable pieces in the row and return whether any changes were made"""
 
         changed = False
         start = 0
@@ -101,11 +101,10 @@ class Board(object):
         return changed
 
     def _make_col_flips(self, curr_color, other_color, row, col):
-
+        """ Find changable pieces in the column and return whether any changes were made"""
         changed = False
 
         for i in range(row + 1, 8):
-            print i
             if self.board[i][col].occupied == curr_color:
                 changed = True
                 for j in range(row, i):
