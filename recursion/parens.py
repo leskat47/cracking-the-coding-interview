@@ -50,5 +50,3 @@ def find_combos(n, stack , p):
     if stack and n:
         find_combos(n, stack - 1, p + ')')
         find_combos(n - 1, stack + 1, p + '(')
-
-print_parens1(3)
