@@ -12,9 +12,6 @@ def zero_lines(mtx):
     """
 
     # traverse matrix, track zero locations
-    # clear rows with zeros
-    # replace columns
-
     row_locations = set()
     col_locations = set()
     for r in range(len(mtx)):
@@ -23,12 +20,15 @@ def zero_lines(mtx):
                 row_locations.add(r)
                 col_locations.add(c)
 
+    # clear rows with zeros
     clear_row = [0 for i in range(len(mtx[0]))]
     for row in row_locations:
         mtx[row] = clear_row
 
     # set of row locations not yet flipped
     row_items_left = set(range(len(mtx[0]) - 1)) - row_locations
+
+    # replace columns
     for row in row_items_left:
         for col in col_locations:
             mtx[row][col] = 0
